@@ -37,4 +37,4 @@ BGRMPipeline.NATIVE_DITHER = "NATIVE_DITHER";
 
 module.exports = BGRMPipeline;
 
-new BGRMPipeline({}).run(path.join(__dirname, "./*.png"), path.join(__dirname,"./output"), path.join(__dirname,"./output"))
+//new BGRMPipeline({}).run(path.join(__dirname, "./*.png"), path.join(__dirname,"./output"), path.join(__dirname,"./output"))
