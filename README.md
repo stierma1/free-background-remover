@@ -114,7 +114,7 @@ Here are examples of using the Free Background Remover with the image "Lenna".
 
 ![Original Image](./lenna.png)
 
-### Background Removed with Floyd-Steinberg Dithering
+### Background Removed with Threshold applied and Floyd-Steinberg Dithering
 
 ![Background Removed with Threshold applied and Floyd-Steinberg Dithering](./lenna-rmbg-threshold-with-dither.png)
 
