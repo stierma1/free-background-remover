@@ -31,20 +31,23 @@ function loadImageFromBuffer(buffer){
     })
 }
 
-async function sharpen(inputBuffer){
+async function sharpen(inputBuffer, {sigma = .85, flat = .05, jagged = 2, noSharpen = false}){
+  if(noSharpen){
+    return inputBuffer;
+  }
   return sharp(inputBuffer)
-    .sharpen(.85, .05)
+    .sharpen(sigma, flat, jagged)
     .toBuffer()
 }
 
-async function preprocess(imagePath){
+async function preprocess(imagePath, sharpenConfig = {}){
     let jimpImage = await Jimp.read(imagePath);
     let originalJimpImage = await jimpImage.clone();
     let originalHeight = jimpImage.getHeight();
     let originalWidth = jimpImage.getWidth();
     let resized = jimpImage.resize(320, 320,Jimp.RESIZE_BICUBIC)
     let resizedBuffer = await resized.getBufferAsync(Jimp.MIME_PNG);
-    let sharpenedBuffer = await sharpen(resizedBuffer)
+    let sharpenedBuffer = await sharpen(resizedBuffer, sharpenConfig)
     const image = await loadImageFromBuffer(sharpenedBuffer);
 
     const { width, height } = image;
