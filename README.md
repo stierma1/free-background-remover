@@ -50,7 +50,8 @@ pipeline.run(inputPath, outputPath, outputMasksPath)
 - **dither**: Dithering method for post-processing masks. Options are:
   - `BGRMPipeline.FLOYD_STEINBURG_DITHER`
   - `BGRMPipeline.NO_DITHER`
-  - `BGRMPipeline.NATIVE_DITHER` (default)
+  - `BGRMPipeline.NATIVE_DITHER`
+  - `BGRMPipeline.THRESHOLD_WITH_DITHER` (default)
 
 ## API
 
@@ -94,8 +95,6 @@ Here's an example script to remove backgrounds from images in the `input` direct
 const BGRMPipeline = require('./index');
 
 const pipeline = new BGRMPipeline({
-  onnxModel: "./u2netp.onnx",
-  dither: BGRMPipeline.NATIVE_DITHER
 });
 
 pipeline.run("input/*.jpg", "output", "masks")
@@ -115,13 +114,14 @@ Here are examples of using the Free Background Remover with the image "Lenna".
 
 ![Original Image](./lenna.png)
 
+### Background Removed with Floyd-Steinberg Dithering
+
+![Background Removed with Threshold applied and Floyd-Steinberg Dithering](./lenna-rmbg-threshold-with-dither.png)
+
 ### Background Removed with Native Dithering
 
 ![Background Removed with Native Dithering](./lenna-rmbg-native.png)
 
-### Background Removed with Floyd-Steinberg Dithering
-
-![Background Removed with Threshold applied and Floyd-Steinberg Dithering](./lenna-rmbg-threshold-with-dither.png)
 
 ### Background Removed with Floyd-Steinberg Dithering
 
