@@ -1,6 +1,6 @@
 {
   "name": "free-background-remover",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Removes the background of an image.  Runs locally, no api keys needed.",
   "main": "index.js",
   "scripts": {
@@ -13,6 +13,7 @@
     "floyd-steinberg": "^1.0.6",
     "glob": "^10.4.1",
     "jimp": "^0.22.12",
-    "onnxruntime-node": "^1.18.0"
+    "onnxruntime-node": "^1.18.0",
+    "sharp": "^0.33.4"
   }
 }

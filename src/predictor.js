@@ -3,6 +3,7 @@ const {
     createCanvas
   } = require('canvas');
 
+
 async function predictor(input_imageData, onnxModel){
     const session = await ort.InferenceSession.create(onnxModel);
                     // input_name = getInputs();

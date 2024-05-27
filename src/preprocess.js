@@ -6,7 +6,8 @@ const {
     createImageData,
   } = require('canvas');
 const Jimp = require("jimp");
-const path = require("path");
+const sharp = require("sharp");
+
 
 async function getImageData(path) {
     const image = await loadImage(path);
@@ -30,14 +31,21 @@ function loadImageFromBuffer(buffer){
     })
 }
 
+async function sharpen(inputBuffer){
+  return sharp(inputBuffer)
+    .sharpen(.85, .05)
+    .toBuffer()
+}
+
 async function preprocess(imagePath){
     let jimpImage = await Jimp.read(imagePath);
     let originalJimpImage = await jimpImage.clone();
     let originalHeight = jimpImage.getHeight();
     let originalWidth = jimpImage.getWidth();
     let resized = jimpImage.resize(320, 320,Jimp.RESIZE_BICUBIC)
-    let resizedBuffer = await resized.getBufferAsync(Jimp.MIME_PNG)
-    const image = await loadImageFromBuffer(resizedBuffer);
+    let resizedBuffer = await resized.getBufferAsync(Jimp.MIME_PNG);
+    let sharpenedBuffer = await sharpen(resizedBuffer)
+    const image = await loadImageFromBuffer(sharpenedBuffer);
 
     const { width, height } = image;
     const canvas = await createCanvas(320, 320);
