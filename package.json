@@ -1,7 +1,11 @@
 {
   "name": "free-background-remover",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Removes the background of an image.  Runs locally, no api keys needed.",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/stierma1/free-background-remover.git"
+  },
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
