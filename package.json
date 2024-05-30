@@ -1,6 +1,6 @@
 {
   "name": "free-background-remover",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Removes the background of an image.  Runs locally, no api keys needed.",
   "repository": {
     "type": "git",

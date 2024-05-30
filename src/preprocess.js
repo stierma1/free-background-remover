@@ -40,18 +40,29 @@ async function sharpen(inputBuffer, {sigma = .85, flat = .05, jagged = 2, noShar
     .toBuffer()
 }
 
-async function preprocess(imagePath, sharpenConfig = {}){
+async function preprocess(imagePath, sharpenConfig = {}, onnxModelProfile){
     let jimpImage = await Jimp.read(imagePath);
     let originalJimpImage = await jimpImage.clone();
     let originalHeight = jimpImage.getHeight();
     let originalWidth = jimpImage.getWidth();
-    let resized = jimpImage.resize(320, 320,Jimp.RESIZE_BICUBIC)
+
+    let resized;
+    if(onnxModelProfile === "ISNET_GENERAL") {
+      resized = jimpImage.resize(1024, 1024,Jimp.RESIZE_BICUBIC)
+    } else {
+      resized = jimpImage.resize(320, 320,Jimp.RESIZE_BICUBIC)
+    }
     let resizedBuffer = await resized.getBufferAsync(Jimp.MIME_PNG);
     let sharpenedBuffer = await sharpen(resizedBuffer, sharpenConfig)
     const image = await loadImageFromBuffer(sharpenedBuffer);
 
     const { width, height } = image;
-    const canvas = await createCanvas(320, 320);
+    let canvas;
+    if(onnxModelProfile === "ISNET_GENERAL") {
+      canvas = await createCanvas(1024, 1024);
+    } else {
+      canvas = await createCanvas(320, 320);
+    }
     const ctx = canvas.getContext('2d');
   
     ctx.drawImage(image, 0, 0);

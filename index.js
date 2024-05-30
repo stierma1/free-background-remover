@@ -7,19 +7,20 @@ const fileWriter = require("./src/file-writer");
 const bgRm = require("./src/bg-rm");
 
 class BGRMPipeline{
-    constructor({onnxModel = "./u2netp.onnx", dither = BGRMPipeline.THRESHOLD_WITH_DITHER, sharpenConfig = {}, thresholdConfig = {}}){
+    constructor({onnxModel = "./u2netp.onnx", onnxModelProfile = "U2NET", dither = BGRMPipeline.THRESHOLD_WITH_DITHER, sharpenConfig = {}, thresholdConfig = {}}){
         this.onnxModel = onnxModel === "./u2netp.onnx" ? path.join(__dirname,onnxModel) : onnxModel;
         this.dither = dither;
         this.sharpenConfig = sharpenConfig;
         this.thresholdConfig = thresholdConfig;
+        this.onnxModelProfile = onnxModelProfile;
     }
 
     async run(inputPath, outputPath, outputMasksPath = null){
        let filePaths = await glob.glob(inputPath);
         
        for(let filePath of filePaths){
-        let {imageData, originalJimpImage, originalHeight, originalWidth} = await preprocess(filePath, this.sharpenConfig);
-        let maskBuffer = await predictor(imageData, this.onnxModel);
+        let {imageData, originalJimpImage, originalHeight, originalWidth} = await preprocess(filePath, this.sharpenConfig, this.onnxModelProfile);
+        let maskBuffer = await predictor(imageData, this.onnxModel, this.onnxModelProfile);
         let outputMaskBuffer = await postProcess(maskBuffer, originalHeight, originalWidth, this.dither, this.thresholdConfig);
         if(outputMasksPath){
             let maskPath = path.join(outputMasksPath, filePath.split("/")[filePath.split("/").length - 1])
@@ -37,6 +38,7 @@ BGRMPipeline.FLOYD_STEINBERG_DITHER = "FLOYD_STEINBERG";
 BGRMPipeline.NO_DITHER = "NO_DITHER";
 BGRMPipeline.NATIVE_DITHER = "NATIVE_DITHER";
 BGRMPipeline.THRESHOLD_WITH_DITHER = "THRESHOLD_WITH_DITHER";
+BGRMPipeline.ONNX_MODEL_PROFILES = {U2NET:"U2NET", ISNET_GENERAL:"ISNET_GENERAL"};
 
 module.exports = BGRMPipeline;
 

@@ -4,17 +4,23 @@ const {
   } = require('canvas');
 
 
-async function predictor(input_imageData, onnxModel){
+async function predictor(input_imageData, onnxModel, onnxModelProfile){
     const session = await ort.InferenceSession.create(onnxModel);
                     // input_name = getInputs();
                     const inputNames = session.inputNames;
 
                     const canvas = await createCanvas(input_imageData.width, input_imageData.height);
                     const ctx = canvas.getContext("2d");
-
+                    
                     var floatArr =  new Float32Array(320 * 320 * 3)
                     var floatArr1 =  new Float32Array(320 * 320 * 3)
                     var floatArr2 =  new Float32Array(320 * 320 * 3)
+                    
+                    if(onnxModelProfile === "ISNET_GENERAL"){
+                        floatArr = new Float32Array(1024 * 1024 * 3)
+                        floatArr1 =  new Float32Array(1024 * 1024 * 3)
+                        floatArr2 =  new Float32Array(1024 * 1024 * 3)
+                    }
                     
                     var j = 0
                     for (let i = 1; i < input_imageData.data.length+1; i ++) {
@@ -35,23 +41,41 @@ async function predictor(input_imageData, onnxModel){
                         k = k + 1
                     } 
 
-                    var l = 102400 
+                    let l = 102400;
+                    if(onnxModelProfile === "ISNET_GENERAL"){
+                        l = 1048576;
+                    }
+
                     for (let i = 1; i < floatArr.length; i += 3) {
                         floatArr2[l] = floatArr[i]  // red   color
                         l = l + 1
                     } 
+                    let m = 204800;
+                    if(onnxModelProfile === "ISNET_GENERAL"){
+                        m = 2097152;
+                    }
 
-                    var m = 204800
                     for (let i = 2; i < floatArr.length; i += 3) {
                         floatArr2[m] = floatArr[i]  // red   color
                         m = m + 1
                     } 
-                    const input = new ort.Tensor('float32', floatArr2,  [1, 3, 320, 320])
+                    let input; 
+                    if(onnxModelProfile === "ISNET_GENERAL"){
+                        input = new ort.Tensor('float32', floatArr2,  [1, 3, 1024, 1024])
+                    } else {
+                        input = new ort.Tensor('float32', floatArr2,  [1, 3, 320, 320])
+                    }
                     a = inputNames[0]
-                    const feeds = {"input.1": input};
+                    const feeds = {
+                        "input.1": input,
+                        "input_image": input
+                    };
                     const results = await session.run(feeds).then();
                     const pred = Object.values(results)[0]
                     var myImageData = ctx.createImageData(320, 320);
+                    if(onnxModelProfile === "ISNET_GENERAL"){
+                        myImageData = ctx.createImageData(1024, 1024);
+                    }
                     for (let i = 0; i < pred.data.length*4; i += 4) {
                         var pixelIndex = i;
                         if(i != 0){
