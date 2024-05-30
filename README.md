@@ -4,6 +4,7 @@ Free Background Remover is a Node.js library designed to remove backgrounds from
 
 ## Features
 
+- Support U2NetP (bundled and default) and Isnet general use models for background inference processing
 - Supports multiple dithering methods for mask post-processing.
 - Handles batch processing of images from a specified input directory.
 - Outputs images with removed backgrounds to a specified directory.
@@ -28,6 +29,7 @@ const BGRMPipeline = require('./index');
 
 const pipeline = new BGRMPipeline({
   onnxModel: "./u2netp.onnx", // Path to your ONNX model
+  onnxModelProfile: BGRMPipeline.ONNX_MODEL_PROFILE.U2NET // The model profile that will be used to shape the input tensor and image
   dither: BGRMPipeline.NATIVE_DITHER // Dithering method
 });
 
@@ -47,6 +49,9 @@ pipeline.run(inputPath, outputPath, outputMasksPath)
 ### Configuration Options
 
 - **onnxModel**: Path to the ONNX model file. Default is `./u2netp.onnx`.
+- **onnxModelProifle**: The profile to controle input image preprocessor and tensor shaping. Options are:
+  - `BGRMPipeline.ONNX_MODEL_PROFILE.U2NET` (default)
+  - `BGRMPipeline.ONNX_MODEL_PROFILE.ISNET_GENERAL`
 - **dither**: Dithering method for post-processing masks. Options are:
   - `BGRMPipeline.FLOYD_STEINBURG_DITHER`
   - `BGRMPipeline.NO_DITHER`
@@ -65,6 +70,7 @@ new BGRMPipeline(options)
 
 - **options**: An object containing configuration options.
   - **onnxModel**: Path to the ONNX model file.
+  - **onnxModelProfile**: The model profile that will be used to shape the input tensor and image.
   - **dither**: Dithering method for post-processing masks.
 
 #### Methods
@@ -86,6 +92,10 @@ ONNX (Open Neural Network Exchange) is an open format built to represent machine
 ### Limitations of U^2-Net Models
 
 The U^2-Net model used in this library generates masks at a resolution of 320x320 pixels. This means that while the model is effective at removing backgrounds, the resulting mask resolution might not match the original image resolution, potentially leading to some loss of detail in the final output.
+
+### ISNET Model
+
+The ISNET model generates masks at a resolution of 1024x1024 pixels. However the onnx file is >150Mb so I did not bundle that file directly into the library.  You can download it seperately and use the input parameter onnxModel to tell it the path to your file.  Dont forget to change the onnxModelProfile parameter as well when you do this.
 
 ## Example
 
